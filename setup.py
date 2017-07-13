@@ -42,12 +42,13 @@ setup(name='check_talend_job',
       license="BSD",
       packages=find_packages("src"),
       package_dir = {"": "src"},
-      namespace_packages=["blbl"],
       include_package_data=True,
       zip_safe=False,
       install_requires=install_requires,
       entry_points="""
       # -*- Entry points: -*-
+      [console_scripts]
+      check_talend_job = check_talend_job:main
       """,
       )
 
