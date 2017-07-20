@@ -56,7 +56,7 @@ def check_log_file(pathToFile):
     except IndexError:  # Too few lines
         return "UNKNOWN: Not a talend log file", 3
     except Exception as e:
-        return "UNKNOWN: ".join(e.args), 3
+        return "UNKNOWN: " + " ".join(e.args), 3
 
 
 def parse_args(): # pragma: no cover
