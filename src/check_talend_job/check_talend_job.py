@@ -21,7 +21,7 @@ def get_time(line):
         raise Exception("Wrong format for line of log file")
 
 
-def get_latest_job(job):
+def get_latest_job(job): # pragma: no cover
     try:
         path = config.basePath + job + '/*'
         list_of_files = glob.glob(path)
@@ -59,7 +59,7 @@ def check_log_file(pathToFile):
         return "UNKNOWN: ".join(e.args), 3
 
 
-def parse_args():
+def parse_args(): # pragma: no cover
     argp = argparse.ArgumentParser(description=__doc__)
     argp.add_argument('-j', '--job', required=True, help='Name of job')
     return argp.parse_args()
@@ -72,5 +72,5 @@ def main():
     exit(status)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__': # pragma: no cover
     main()
