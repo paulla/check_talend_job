@@ -84,7 +84,6 @@ def create_conf():
 def configure():
     cfg = configparser.ConfigParser()
     cfg.read(sys.prefix+"/config.ini")
-    print(sys.prefix)
     try:
         global config
         config['basePath'] = cfg.get('main', 'basePath')
