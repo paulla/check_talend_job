@@ -3,12 +3,11 @@ import mock
 
 import sys
 from contextlib import contextmanager
-from StringIO import StringIO
+from io import StringIO
 
 from datetime import datetime
 
 from check_talend_job import check_talend_job
-from check_talend_job import config
 
 
 @contextmanager
@@ -29,7 +28,7 @@ class Test__get_time(unittest.TestCase):
         self.assertEqual(check_talend_job.get_time("string 12:12:12;string string"), time)
 
     def test__bad_time(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(Exception):
             check_talend_job.get_time("string 12:12:61;string string")
 
     def test__bad_format(self):
@@ -40,7 +39,7 @@ class Test__get_time(unittest.TestCase):
 class Test__check_log_file(unittest.TestCase):
 
     def mock_check_log_file(self, list_lines):
-        config.endingString = ";END\n"
+        check_talend_job.config = {"endingString": ";END\n"}
         mopen = mock.mock_open(read_data=list_lines)
         with mock.patch('check_talend_job.check_talend_job.open', mopen, create=True):
             return check_talend_job.check_log_file("/dev/null")
