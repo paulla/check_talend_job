@@ -16,7 +16,7 @@ def get_time(line):
     try:
         strTime = re.split(' |;', line)[1]
         return datetime.strptime(strTime, "%H:%M:%S")
-    except IndexError, ValueError:
+    except (IndexError, ValueError):
         raise Exception("Wrong format for line of log file")
 
 
