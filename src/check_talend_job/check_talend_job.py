@@ -4,13 +4,15 @@
 """Check if talend job runned without problem
 """
 from datetime import datetime
+import configparser
 import argparse
 import glob
+import sys
 import os
 import re
 
-import config
 
+config = {}
 
 def get_time(line):
     try:
@@ -22,7 +24,7 @@ def get_time(line):
 
 def get_latest_job(job):    # pragma: no cover
     try:
-        path = config.basePath + job + '/*'
+        path = config['basePath'] + job + '/*'
         list_of_files = glob.glob(path)
         latest = max(list_of_files, key=os.path.getctime)
         return latest
@@ -39,7 +41,7 @@ def check_log_file(pathToFile):
         endTime = get_time(lines[-2])
         elapsedTime = endTime - startTime
 
-        if config.endingString in lines[-2]:
+        if config['endingString'] in lines[-2]:
             message = "OK: task run in {0}s | time={1}".format(
                                                             elapsedTime.seconds,
                                                             elapsedTime.total_seconds())
@@ -64,8 +66,37 @@ def parse_args():   # pragma: no cover
     return argp.parse_args()
 
 
+def create_conf():
+    cfg = configparser.ConfigParser()
+    cfg.add_section('main')
+
+
+    global config
+    config['basePath'] = input("Enter path to all job logs (ex : 'C:\SomeDir\\'): ")
+    config['endingString'] = input("Enter string ending a correct talend log (ex ';END\\n') : ")
+
+    cfg.set('main', 'basePath', config['basePath'])
+    cfg.set('main', 'endingString', config['endingString'])
+
+    cfg.write(open(sys.prefix+'/config.ini', 'w'))
+
+
+def configure():
+    cfg = configparser.ConfigParser()
+    cfg.read(sys.prefix+"/config.ini")
+    print(sys.prefix)
+    try:
+        global config
+        config['basePath'] = cfg.get('main', 'basePath')
+        config['endingString'] = cfg.get('main', 'basePath')
+    except configparser.NoSectionError:
+        create_conf()
+
+
 def main():
     args = parse_args()
+    configure()
+
     message, status = check_log_file(get_latest_job(args.job))
     print(message)
     exit(status)

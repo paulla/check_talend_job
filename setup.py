@@ -16,7 +16,7 @@ def read_file(*pathes):
     else:
         return ''
 
-desc_files = (('README.rst',), ('docs', 'CHANGES.rst'),
+desc_files = (('README.md',), ('docs', 'CHANGES.rst'),
                 ('docs', 'CONTRIBUTORS.rst'))
 
 long_description = '\n\n'.join([read_file(*pathes) for pathes in desc_files])
