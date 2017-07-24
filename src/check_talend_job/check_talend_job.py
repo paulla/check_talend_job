@@ -7,7 +7,6 @@ from datetime import datetime
 import configparser
 import argparse
 import glob
-import sys
 import os
 import re
 
