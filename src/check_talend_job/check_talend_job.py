@@ -78,12 +78,12 @@ def create_conf():
     cfg.set('main', 'basePath', config['basePath'])
     cfg.set('main', 'endingString', config['endingString'])
 
-    cfg.write(open(sys.prefix+'/config.ini', 'w'))
+    cfg.write(open(os.path.dirname(__file__)+'/config.ini', 'w'))
 
 
 def configure():
     cfg = configparser.ConfigParser()
-    cfg.read(sys.prefix+"/config.ini")
+    cfg.read(os.path.dirname(__file__)+"/config.ini")
     try:
         global config
         config['basePath'] = cfg.get('main', 'basePath')
