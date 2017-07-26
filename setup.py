@@ -24,9 +24,9 @@ long_description = '\n\n'.join([read_file(*pathes) for pathes in desc_files])
 install_requires=['setuptools']
 
 
-setup(name='check_talend_job',
+setup(name='check_task_log',
       version=version,
-      description="A nagios-like plugin to check if talend jobs executed successfully",
+      description="A nagios-like plugin to check if task jobs executed successfully",
       long_description=long_description,
       platforms = ["any"],
       # Get more strings from
@@ -38,7 +38,7 @@ setup(name='check_talend_job',
       keywords="nagios",
       author="Elio Maisonneuve",
       author_email="maisonneuv@eisti.eu",
-      url="https://github.com/paulla/check_talend_job",
+      url="https://github.com/paulla/check_task_log",
       license="BSD",
       packages=find_packages("src"),
       package_dir = {"": "src"},
@@ -48,7 +48,7 @@ setup(name='check_talend_job',
       entry_points="""
       # -*- Entry points: -*-
       [console_scripts]
-      check_talend_job = check_talend_job:main
+      check_task_log = check_task_log:main
       """,
       )
 

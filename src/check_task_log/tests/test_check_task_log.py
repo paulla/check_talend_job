@@ -7,7 +7,7 @@ from io import StringIO
 
 from datetime import datetime
 
-from check_talend_job import check_talend_job
+from check_task_log import check_task_log
 
 
 @contextmanager
@@ -25,24 +25,23 @@ def captured_output():
 class Test__get_time(unittest.TestCase):
     def test__good_format(self):
         time = datetime(1900,1,1,12,12,12)
-        self.assertEqual(check_talend_job.get_time("string 12:12:12;string string"), time)
+        self.assertEqual(check_task_log.get_time("string 12:12:12;string string"), time)
 
     def test__bad_time(self):
         with self.assertRaises(Exception):
-            check_talend_job.get_time("string 12:12:61;string string")
+            check_task_log.get_time("string 12:12:61;string string")
 
     def test__bad_format(self):
         with self.assertRaises(Exception):
-            check_talend_job.get_time("12:12:12")
+            check_task_log.get_time("12:12:12")
 
 
 class Test__check_log_file(unittest.TestCase):
 
     def mock_check_log_file(self, list_lines):
-        check_talend_job.config = {"endingString": ";END\n"}
         mopen = mock.mock_open(read_data=list_lines)
-        with mock.patch('check_talend_job.check_talend_job.open', mopen, create=True):
-            return check_talend_job.check_log_file("/dev/null")
+        with mock.patch('check_task_log.check_task_log.open', mopen, create=True):
+            return check_task_log.check_log_file("/dev/null", ";END\n", -2)
 
 
     def test__ok_file(self):
@@ -64,11 +63,11 @@ class Test__check_log_file(unittest.TestCase):
         self.assertEqual(self.mock_check_log_file(critical_file), critical_return)
 
     def test__file_not_found(self):
-        self.assertEqual(check_talend_job.check_log_file(''), ('UNKNOWN: File  not found', 3))
+        self.assertEqual(check_task_log.check_log_file('', '', None), ('UNKNOWN:  is not a file', 3))
 
     def test__too_few_line(self):
         too_short_file = "String 10:10:10;string string\n"
-        self.assertEqual(self.mock_check_log_file(too_short_file), ('UNKNOWN: Not a talend log file', 3))
+        self.assertEqual(self.mock_check_log_file(too_short_file), ('UNKNOWN: this line does not exist (file too short)', 3))
 
     def test__bad_file_format(self):
         bad_file = "String"
@@ -79,9 +78,9 @@ class Test__check_log_file(unittest.TestCase):
 class Test__main(unittest.TestCase):
     message = "message"
 
-    @mock.patch("check_talend_job.check_talend_job.get_latest_job")
-    @mock.patch("check_talend_job.check_talend_job.parse_args")
-    @mock.patch("check_talend_job.check_talend_job.check_log_file")
+    @mock.patch("check_task_log.check_task_log.get_latest_job")
+    @mock.patch("check_task_log.check_task_log.parse_args")
+    @mock.patch("check_task_log.check_task_log.check_log_file")
     def test_output(self, check_log_file, parse_args, get_latest_job):
         check_log_file.return_value = self.message, 0
         args = mock.MagicMock()
@@ -90,7 +89,7 @@ class Test__main(unittest.TestCase):
         get_latest_job.return_value = None
         with captured_output() as (out, err):
             with self.assertRaises(SystemExit) as exitException:
-                check_talend_job.main()
+                check_task_log.main()
         output = out.getvalue().strip()
         self.assertEqual(output, self.message)
         self.assertEqual(exitException.exception.code, 0)
